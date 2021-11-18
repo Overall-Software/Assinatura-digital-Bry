@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  db:
+    image: 'postgres'
+    restart: always
+    environment:
+      POSTGRES_USER: 'root'
+      POSTGRES_PASSWORD: 'qtkXtmTC9EFxK8Mz'
+      POSTGRES_DB: 'gerador'
+      PGDATA: /data/postgres
+    volumes:
+      - ./docker_db:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - api
+
+  server:
+    build:
+      ./docker/nginx
+    volumes:
+      - ./docker/nginx/vhost.conf:/opt/docker/etc/nginx/vhost.conf
+      - ./docker/nginx/php.ini:/opt/docker/etc/php/php.ini
+      - ./:/app
+    ports:
+      - "8000:80"
+    links:
+      - db
+    networks:
+      - api
+
+networks:
+  api:
+    driver: bridge
+
